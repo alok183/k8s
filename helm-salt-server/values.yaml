@@ -1,0 +1,20 @@
+# Default values for install-salt-server.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+minionReplicaCount: 2
+masterReplicaCount: 1
+
+image:
+  repository: alok183/ubuntupy3
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.0"
+
+service:
+  type: ClusterIP
+  publisherPort: 4505
+  requesterPort: 4506
+
+environment:
+  saltArchRelease: "3001.3"

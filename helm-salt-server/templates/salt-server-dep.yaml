@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: salt-configmap
+data:
+  salt-setup-ubuntu.sh: |
+{{- .Files.Get "salt/salt-setup-ubuntu.sh" | nindent 8 }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: salt-master-service
+spec:
+  selector:
+    app: salt-master
+  ports:
+    - port: {{ .Values.service.publisherPort }}
+      name: publisher
+    - port: {{ .Values.service.requesterPort }}
+      name: requester
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salt-master
+  labels:
+    app: salt-master
+spec:
+  selector:
+    matchLabels:
+      app: salt-master
+  replicas: {{ .Values.masterReplicaCount }}
+  template:
+    metadata:
+      name: salt-master
+      labels:
+        app: salt-master
+    spec:
+      containers:
+      - name: salt-master
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/bin/sh","-c"]
+        args: ["cp /home/salt-conf/salt-setup-ubuntu.sh /opt && chmod +x  /opt/salt-setup-ubuntu.sh && /opt/salt-setup-ubuntu.sh"]
+        env:
+        - name: SALT_ARCH_RELEASE
+          value: "{{ .Values.environment.saltArchRelease }}"
+        - name: SALT_REPO
+          value: "py3"
+        - name: SALT_ROLE
+          value: "salt-master"
+        volumeMounts:
+        - name: salt-files
+          mountPath: /home/salt-conf
+          readOnly: false
+      volumes:
+      - name: salt-files
+        configMap:
+          name: salt-configmap
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salt-minion
+  labels:
+    app: salt-minion
+spec:
+  selector:
+    matchLabels:
+      app: salt-minion
+  replicas: {{ .Values.minionReplicaCount }}
+  template:
+    metadata:
+      name: salt-minion
+      labels:
+        app: salt-minion
+    spec:
+      containers:
+      - name: salt-minion
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/bin/sh","-c"]
+        args: ["cp /home/salt-conf/salt-setup-ubuntu.sh /opt && chmod +x  /opt/salt-setup-ubuntu.sh && /opt/salt-setup-ubuntu.sh"]
+        env:
+        - name: SALT_ARCH_RELEASE
+          value: "{{ .Values.environment.saltArchRelease }}"
+        - name: SALT_REPO
+          value: "py3"
+        - name: SALT_ROLE
+          value: "salt-minion"
+        volumeMounts:
+        - name: salt-files
+          mountPath: /home/salt-conf
+          readOnly: false
+      volumes:
+      - name: salt-files
+        configMap:
+          name: salt-configmap
