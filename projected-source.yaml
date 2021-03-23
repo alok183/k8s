@@ -1,0 +1,15 @@
+      volumeMounts:
+          - name: commonconfig-volume
+            mountPath: /opt/custom-conf
+      volumes:
+      - name: commonconfig-volume
+        projected:
+          sources:
+          - configMap:
+              name: props
+          - configMap:
+              name: certs
+          - configMap:
+              name: custom
+          - secret:
+              name: secret
