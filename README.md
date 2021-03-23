@@ -8,6 +8,6 @@
   1. do git clone
   2. Run helm3 command \
      helm install <release-name> <checkout_path>/helm-salt-server
-  
-  - Projects several existing volume sources into the same directory\
+ 
+- Projects several existing volume sources into the same directory\
   [projected-source.yaml](projected-source.yaml)
