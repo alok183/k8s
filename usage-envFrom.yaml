@@ -1,0 +1,30 @@
+  spec:
+    containers:
+      - name: app
+        image: myapp:1.0.0
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: envvar-configmap
+        - secretRef:
+            name: envvar-secrets
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: envvar-configmap
+data:
+  db.port: 3306
+  db.user: production
+  
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: envvar-secrets
+type: Opaque
+data:
+  db.password: {{ "shshhsh552" | b64enc }}
+  mail.password: {{ "shshhsh552" | b64enc }}
