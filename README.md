@@ -11,3 +11,9 @@
  
 - Projects several existing volume sources into the same directory\
   [projected-source.yaml](projected-source.yaml)
+  
+- Kubernetes envFrom for environment variables\
+  [usage-envFrom.yaml](usage-envFrom.yaml)
+  
+  
+  
