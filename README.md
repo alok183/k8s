@@ -15,5 +15,10 @@
 - Kubernetes envFrom for environment variables\
   [usage-envFrom.yaml](usage-envFrom.yaml)
   
+- Helm Automatically Roll Deployments\
+  Add annotaion on the Deployment and Pod level.\
+  [rollout_deployment.yaml](rollout_deployment.yaml)
+  
+  
   
   
