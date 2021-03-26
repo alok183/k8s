@@ -1,0 +1,18 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+...
+...
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alsh
+  template:
+    metadata:
+      labels:
+        app: alsh
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
